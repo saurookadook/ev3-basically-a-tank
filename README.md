@@ -8,6 +8,24 @@ Some kinda program for some kind of tanky creation of mine ...with the EV3Brick 
 
 ## General Dev
 
+To get your local environment setup, fun the following:
+
+```shell
+$ poetry config cache-dir ./.poetry-cache
+$ poetry install
+```
+
+If you're using VS Code, you should additionally create a local `.vscode` folder with a `settings.json` file and add the following:
+```json
+{
+    "python.analysis.extraPaths": [
+        // replace `ev3-basically-a-tank-aBCDEFGH-py3.8` with the name of the similarly-located folder from your local poetry cache directory
+        "./.poetry-cache/virtualenvs/ev3-basically-a-tank-aBCDEFGH-py3.8/lib/python3.8/site-packages"
+    ]
+}
+```
+
+
 - [Connecting to EV3dev Using SSH](https://www.ev3dev.org/docs/tutorials/connecting-to-ev3dev-with-ssh/)
 
 ```bash

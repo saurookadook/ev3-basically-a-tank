@@ -2,3 +2,4 @@
 .poetry-cache/
 
 .DS_Store
+.vscode/
