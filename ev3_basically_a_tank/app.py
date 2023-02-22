@@ -1,21 +1,25 @@
+from time import sleep
+
 from .utils import debug_logger
 
 
 class App:
     __slots__ = [
+        "_name",
         "_brick_device",
+        "_buttons",
         "_console",
+        "_is_silenced",
         "_port_a",
         "_port_b",
-        "_console",
-        "_buttons",
+        "_port_c",
+        "_port_d",
         "_sound",
     ]
 
     def __init__(self, name="", brick_device=None, **kwargs):
         self.name = name
-
-        self._brick_device = brick_device
+        self.brick_device = brick_device
 
         # TODO: better name? also, could this be neater?
         try:
@@ -92,33 +96,81 @@ class App:
             self._sound.speak(text, **kwargs)
 
     @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    @property
+    def brick_device(self):
+        return self._brick_device
+
+    @brick_device.setter
+    def brick_device(self, value):
+        self._brick_device = value
+
+    @property
+    def buttons(self):
+        self._buttons
+
+    @buttons.setter
+    def buttons(self, value):
+        self._buttons = value
+
+    @property
+    def console(self):
+        self._console
+
+    @console.setter
+    def console(self, value):
+        self._console = value
+
+    @property
+    def is_silenced(self):
+        self._is_silenced
+
+    @is_silenced.setter
+    def is_silenced(self, value):
+        self._is_silenced = value
+
+    @property
     def port_a(self):
-        return self.port_a
+        return self._port_a
 
     @port_a.setter
     def port_a(self, value):
-        self.port_a = value
+        self._port_a = value
 
     @property
     def port_b(self):
-        return self.port_b
+        return self._port_b
 
     @port_b.setter
     def port_b(self, value):
-        self.port_b = value
+        self._port_b = value
 
     @property
     def port_c(self):
-        return self.port_c
+        return self._port_c
 
     @port_c.setter
     def port_c(self, value):
-        self.port_c = value
+        self._port_c = value
 
     @property
     def port_d(self):
-        return self.port_d
+        return self._port_d
 
     @port_d.setter
     def port_d(self, value):
-        self.port_d = value
+        self._port_d = value
+
+    @property
+    def sound(self):
+        self._sound
+
+    @sound.setter
+    def sound(self, value):
+        self._sound = value

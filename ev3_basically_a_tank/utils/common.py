@@ -10,6 +10,6 @@ def debug_logger(*args, **kwargs):
 
 
 def safe_init_port(port_letter, keyword_args):
-    port_x = f"port_{port_letter.lower()}"
-    outX = f"out{port_letter.upper()}"
+    port_x = "port_{}".format(port_letter.lower())
+    outX = "out{}".format(port_letter.upper())
     return keyword_args[port_x] or LegoPort(outX)

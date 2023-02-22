@@ -28,11 +28,11 @@ class EV3TachoTank(AbstractEV3Tank):
         self.sound = Sound()
 
         super()._configure_ports_with_mode(
-            self, port_a=safe_init_port("a", kwargs), port_b=safe_init_port("b", kwargs)
+            port_a=safe_init_port("a", kwargs), port_b=safe_init_port("b", kwargs)
         )
 
-        self.right_motor = MediumMotor(self._port_a.address)
-        self.left_motor = MediumMotor(self._port_b.address)
+        self.right_motor = MediumMotor(self.port_a.address)
+        self.left_motor = MediumMotor(self.port_b.address)
 
         self.front_touch_sensor = TouchSensor(INPUT_1)
         self.back_touch_sensor = TouchSensor(INPUT_2)
@@ -146,11 +146,11 @@ class EV3TachoTank(AbstractEV3Tank):
             self.current_direction = drive_direction
 
         if speed and not left_wheel_speed:
-            # left_wheel_speed = -speed if drive_direction == "forwards" else speed
-            left_wheel_speed = speed if drive_direction == "forwards" else -speed
+            left_wheel_speed = -speed if drive_direction == "forwards" else speed
+            # left_wheel_speed = speed if drive_direction == "forwards" else -speed
         if speed and not right_wheel_speed:
-            # right_wheel_speed = speed if drive_direction == "forwards" else -speed
-            right_wheel_speed = -speed if drive_direction == "forwards" else speed
+            right_wheel_speed = speed if drive_direction == "forwards" else -speed
+            # right_wheel_speed = -speed if drive_direction == "forwards" else speed
 
         # self._left_motor.run_direct(duty_cycle_sp=left_wheel_speed)
         # self._right_motor.run_direct(duty_cycle_sp=right_wheel_speed)
