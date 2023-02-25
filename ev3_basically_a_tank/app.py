@@ -4,12 +4,17 @@ from .utils import debug_logger
 
 
 class App:
+
     __slots__ = [
         "_name",
         "_brick_device",
         "_buttons",
         "_console",
         "_is_silenced",
+        "_input_1",
+        "_input_2",
+        "_input_3",
+        "_input_4",
         "_port_a",
         "_port_b",
         "_port_c",
@@ -62,6 +67,44 @@ class App:
             debug_logger("port_d mode: {}".format(self.port_d.mode))
             if not self.port_d.mode:
                 self.port_d.mode = mode_for_d or "dc-motor"
+
+        sleep(0.5)
+
+    @staticmethod
+    def _configure_inputs_with_mode(
+        self,
+        input_1=None,
+        input_2=None,
+        input_3=None,
+        input_4=None,
+        mode_for_1=None,
+        mode_for_2=None,
+        mode_for_3=None,
+        mode_for_4=None,
+    ):
+        self.input_1 = input_1
+        if self.input_1 and self.input_1.status:
+            debug_logger("input_1 mode: {}".format(self.input_1.mode))
+            if not self.input_1.mode:
+                self.input_1.mode = mode_for_1 or "TOUCH"
+
+        self.input_2 = input_2
+        if self.input_2 and self.input_2.status:
+            debug_logger("input_2 mode: {}".format(self.input_2.mode))
+            if not self.input_2.mode:
+                self.input_2.mode = mode_for_2 or "TOUCH"
+
+        self.input_3 = input_3
+        if self.input_3 and self.input_3.status:
+            debug_logger("input_3 mode: {}".format(self.input_3.mode))
+            if not self.input_3.mode:
+                self.input_3.mode = mode_for_3 or "TOUCH"
+
+        self.input_4 = input_4
+        if self.input_4 and self.input_4.status:
+            debug_logger("input_4 mode: {}".format(self.input_4.mode))
+            if not self.input_4.mode:
+                self.input_4.mode = mode_for_4 or "TOUCH"
 
         sleep(0.5)
 
@@ -134,6 +177,38 @@ class App:
     @is_silenced.setter
     def is_silenced(self, value):
         self._is_silenced = value
+
+    @property
+    def input_1(self):
+        return self._input_1
+
+    @input_1.setter
+    def input_1(self, value):
+        self._input_1 = value
+
+    @property
+    def input_2(self):
+        return self._input_2
+
+    @input_2.setter
+    def input_2(self, value):
+        self._input_2 = value
+
+    @property
+    def input_3(self):
+        return self._input_3
+
+    @input_3.setter
+    def input_3(self, value):
+        self._input_3 = value
+
+    @property
+    def input_4(self):
+        return self._input_4
+
+    @input_4.setter
+    def input_4(self, value):
+        self._input_4 = value
 
     @property
     def port_a(self):

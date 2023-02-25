@@ -6,14 +6,11 @@ from ..utils import debug_logger
 class AbstractEV3Tank(App):
 
     __slots__ = [
-        "_buttons",
-        "_console",
-        "_sound",
         "_left_motor",
         "_right_motor",
         "_front_touch_sensor",
         "_back_touch_sensor",
-        "_current_direction",
+        "_current_drive_direction",
         "_drive_direction",
         "_turn_direction",
         "_cruise_speed",
@@ -23,35 +20,11 @@ class AbstractEV3Tank(App):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.current_direction = DriveDirection.FORWARDS.value
+        self.current_drive_direction = DriveDirection.FORWARDS.value
         self.drive_direction = DriveDirection.FORWARDS.value
         self.turn_direction = TurnDirection.STRAIGHT.value
         self.cruise_speed = 80
         self.reorient_speed = 60
-
-    @property
-    def buttons(self):
-        return self._buttons
-
-    @buttons.setter
-    def buttons(self, value):
-        self._buttons = value
-
-    @property
-    def console(self):
-        return self._console
-
-    @console.setter
-    def console(self, value):
-        self._console = value
-
-    @property
-    def sound(self):
-        return self._sound
-
-    @sound.setter
-    def sound(self, value):
-        self._sound = value
 
     @property
     def left_motor(self):
@@ -86,13 +59,13 @@ class AbstractEV3Tank(App):
         self._back_touch_sensor = value
 
     @property
-    def current_direction(self):
-        return self._current_direction
+    def current_drive_direction(self):
+        return self._current_drive_direction
 
-    @current_direction.setter
-    def current_direction(self, value):
+    @current_drive_direction.setter
+    def current_drive_direction(self, value):
         try:
-            self._current_direction = DriveDirection(value).value
+            self._current_drive_direction = DriveDirection(value).value
         except ValueError as ve:
             debug_logger(ve)
             # raise ve
@@ -137,5 +110,8 @@ class AbstractEV3Tank(App):
     def reorient_speed(self, value):
         self._reorient_speed = value
 
-    def _configure_ports_with_mode(self, port_a=None, port_b=None):
-        super()._configure_ports_with_mode(self, port_a=port_a, port_b=port_b)
+    def _configure_ports_with_mode(self, **kwargs):
+        super()._configure_ports_with_mode(self, **kwargs)
+
+    def _configure_inputs_with_mode(self, **kwargs):
+        super()._configure_inputs_with_mode(self, **kwargs)

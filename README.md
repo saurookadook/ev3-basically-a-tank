@@ -70,4 +70,5 @@ print(("-" * 30) + " all_motors " + ("-" * 30), file=sys.stderr)
 ### Resources
 
 - [ev3dev-lang-python](https://github.com/ev3dev/ev3dev-lang-python)
+- [python-ev3dev-testfs](https://github.com/pybricks/python-ev3dev-testfs)
 - [Mindstorms EV3 - Building Instructions](https://education.lego.com/en-us/product-resources/mindstorms-ev3/downloads/building-instructions)

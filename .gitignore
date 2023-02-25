@@ -1,5 +1,7 @@
 .examples/
+.mpyp_cache/
 .poetry-cache/
+.pytest_cache/
 __pycache__/
 
 .DS_Store
