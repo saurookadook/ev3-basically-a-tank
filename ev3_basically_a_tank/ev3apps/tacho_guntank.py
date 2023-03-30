@@ -145,11 +145,10 @@ class EV3TachoTank(AbstractEV3Tank):
         duration=-1,
     ):
         debug_logger(
-            ("-" * 30) + "top of `drive`" + ("-" * 30) + "\n",
+            ("-" * 30) + " top of `drive` " + ("-" * 30) + "\n",
             "speed: {}\n".format(speed),
             "left_wheel_speed: {}\n".format(left_wheel_speed),
-            "left_wheel_speed: {}\n".format(left_wheel_speed),
-            "left_wheel_speed: {}\n".format(left_wheel_speed),
+            "right_wheel_speed: {}\n".format(right_wheel_speed),
             "drive_direction: {}\n".format(drive_direction),
             "self.turn_direction: {}\n".format(self.turn_direction),
             "self.drive_direction: {}\n".format(self.drive_direction),
@@ -159,12 +158,18 @@ class EV3TachoTank(AbstractEV3Tank):
             self.current_drive_direction = drive_direction
 
         if speed and not left_wheel_speed:
-            left_wheel_speed = -speed if drive_direction == "forwards" else speed
+            left_wheel_speed = speed if drive_direction == "forwards" else -speed
             # left_wheel_speed = speed if drive_direction == "forwards" else -speed
         if speed and not right_wheel_speed:
-            right_wheel_speed = speed if drive_direction == "forwards" else -speed
+            right_wheel_speed = -speed if drive_direction == "forwards" else speed
             # right_wheel_speed = -speed if drive_direction == "forwards" else speed
 
+        debug_logger(
+            ("-" * 30) + " wheel speeds before base_run_direct call " + ("-" * 30) + "\n",
+            "left_wheel_speed: {}\n".format(left_wheel_speed),
+            "right_wheel_speed: {}\n".format(right_wheel_speed),
+            "drive_direction: {}\n".format(drive_direction),
+        )
         # self.left_motor.run_direct(duty_cycle_sp=left_wheel_speed)
         # self.right_motor.run_direct(duty_cycle_sp=right_wheel_speed)
         self._base_run_direct(
