@@ -7,7 +7,6 @@ from ev3dev2.sensor import INPUT_1, INPUT_2
 from ev3dev2.sensor.lego import TouchSensor
 from ev3dev2.sound import Sound
 from inspect import getmembers
-from pprint import pprint as pretty_print
 from time import sleep, time
 
 from .abstract_tank import AbstractEV3Tank
@@ -16,11 +15,15 @@ from ..utils import debug_logger, safe_init_port
 
 
 class EV3TachoTank(AbstractEV3Tank):
-
     __slots__ = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        try:
+            self.is_silenced = kwargs["disable_sound"]
+        except KeyError:
+            self.is_silenced = False
 
         self.buttons = Button()
         self.console = Console()
@@ -66,7 +69,6 @@ class EV3TachoTank(AbstractEV3Tank):
         start_time = int(time())
 
         while True:
-
             if self.turn_direction != TurnDirection.STRAIGHT.value:
                 self.turn_in_drive_direction(
                     turn_direction=TurnDirection.STRAIGHT.value
@@ -95,11 +97,12 @@ class EV3TachoTank(AbstractEV3Tank):
                     drive_direction=current_drive_direction,
                     turn_direction=turn_direction,
                 )
-                self.drive(
-                    speed=self.reorient_speed,
-                    drive_direction=current_drive_direction,
-                    duration=2,
-                )
+                sleep(3)
+                # self.drive(
+                #     speed=self.reorient_speed,
+                #     drive_direction=current_drive_direction,
+                #     duration=2,
+                # )
                 self.say("boop bop beep")
 
             elif self._back_touch_sensor.is_pressed:
@@ -120,11 +123,12 @@ class EV3TachoTank(AbstractEV3Tank):
                     drive_direction=current_drive_direction,
                     turn_direction=turn_direction,
                 )
-                self.drive(
-                    speed=self.reorient_speed,
-                    drive_direction=current_drive_direction,
-                    duration=2,
-                )
+                sleep(3)
+                # self.drive(
+                #     speed=self.reorient_speed,
+                #     drive_direction=current_drive_direction,
+                #     duration=2,
+                # )
                 self.say("beep bop boop")
 
             # sleep(0.01)
@@ -144,16 +148,16 @@ class EV3TachoTank(AbstractEV3Tank):
         drive_direction="forwards",
         duration=-1,
     ):
-        debug_logger(
-            ("-" * 30) + " top of `drive` " + ("-" * 30) + "\n",
-            "speed: {}\n".format(speed),
-            "left_wheel_speed: {}\n".format(left_wheel_speed),
-            "right_wheel_speed: {}\n".format(right_wheel_speed),
-            "drive_direction: {}\n".format(drive_direction),
-            "self.turn_direction: {}\n".format(self.turn_direction),
-            "self.drive_direction: {}\n".format(self.drive_direction),
-            "self.current_drive_direction: {}\n".format(self.current_drive_direction),
-        )
+        # debug_logger(
+        #     ("-" * 30) + " top of `drive` " + ("-" * 30) + "\n",
+        #     "speed: {}\n".format(speed),
+        #     "left_wheel_speed: {}\n".format(left_wheel_speed),
+        #     "right_wheel_speed: {}\n".format(right_wheel_speed),
+        #     "drive_direction: {}\n".format(drive_direction),
+        #     "self.turn_direction: {}\n".format(self.turn_direction),
+        #     "self.drive_direction: {}\n".format(self.drive_direction),
+        #     "self.current_drive_direction: {}\n".format(self.current_drive_direction),
+        # )
         if drive_direction != self.current_drive_direction:
             self.current_drive_direction = drive_direction
 
@@ -164,12 +168,12 @@ class EV3TachoTank(AbstractEV3Tank):
             right_wheel_speed = -speed if drive_direction == "forwards" else speed
             # right_wheel_speed = -speed if drive_direction == "forwards" else speed
 
-        debug_logger(
-            ("-" * 30) + " wheel speeds before base_run_direct call " + ("-" * 30) + "\n",
-            "left_wheel_speed: {}\n".format(left_wheel_speed),
-            "right_wheel_speed: {}\n".format(right_wheel_speed),
-            "drive_direction: {}\n".format(drive_direction),
-        )
+        # debug_logger(
+        #     ("-" * 30) + " wheel speeds before base_run_direct call " + ("-" * 30) + "\n",
+        #     "left_wheel_speed: {}\n".format(left_wheel_speed),
+        #     "right_wheel_speed: {}\n".format(right_wheel_speed),
+        #     "drive_direction: {}\n".format(drive_direction),
+        # )
         # self.left_motor.run_direct(duty_cycle_sp=left_wheel_speed)
         # self.right_motor.run_direct(duty_cycle_sp=right_wheel_speed)
         self._base_run_direct(
@@ -180,16 +184,20 @@ class EV3TachoTank(AbstractEV3Tank):
             sleep(duration)
             self.stop()
 
-    def forward(self, left_wheel_speed=0, right_wheel_speed=0):
-        self.left_motor.run_direct(duty_cycle_sp=left_wheel_speed)
-        self.right_motor.run_direct(duty_cycle_sp=-right_wheel_speed)
+    # def forward(self, left_wheel_speed=0, right_wheel_speed=0):
+    #     self.left_motor.run_direct(duty_cycle_sp=left_wheel_speed)
+    #     self.right_motor.run_direct(duty_cycle_sp=-right_wheel_speed)
 
-    def reverse(self, left_wheel_speed=0, right_wheel_speed=0):
-        self.left_motor.run_direct(duty_cycle_sp=-left_wheel_speed)
-        self.right_motor.run_direct(duty_cycle_sp=right_wheel_speed)
+    # def reverse(self, left_wheel_speed=0, right_wheel_speed=0):
+    #     self.left_motor.run_direct(duty_cycle_sp=-left_wheel_speed)
+    #     self.right_motor.run_direct(duty_cycle_sp=right_wheel_speed)
 
     def _base_run_direct(self, left_wheel_speed=0, right_wheel_speed=0):
+        self.left_motor.duty_cycle_sp = left_wheel_speed
+        self.right_motor.duty_cycle_sp = right_wheel_speed
+        sleep(0.1)
         self.left_motor.run_direct(duty_cycle_sp=left_wheel_speed)
+        sleep(0.1)
         self.right_motor.run_direct(duty_cycle_sp=right_wheel_speed)
 
     def turn_in_drive_direction(self, drive_direction, turn_direction):
@@ -197,17 +205,38 @@ class EV3TachoTank(AbstractEV3Tank):
             return
 
         # self.turn_direction = turn_direction
-        left_wheel_speed, right_wheel_speed = self._get_base_wheel_speeds_for_turn(
+        outer_wheel_speed, inner_wheel_speed = self._get_base_wheel_speeds_for_turn(
             drive_direction=drive_direction, turn_direction=turn_direction
         )
 
         if drive_direction == DriveDirection.FORWARDS.value:
+            debug_logger(
+                ("-" * 30)
+                + " turn_in_drive_direction call - FORWARDS "
+                + ("-" * 30)
+                + "\n",
+                "self.cruise_speed: {}\n".format(self.cruise_speed),
+                "left_wheel_speed: {}\n".format(outer_wheel_speed),
+                "right_wheel_speed: {}\n".format(inner_wheel_speed),
+                "drive_direction: {}\n".format(drive_direction),
+            )
             self._base_run_direct(
-                left_wheel_speed=left_wheel_speed, right_wheel_speed=-right_wheel_speed
+                left_wheel_speed=outer_wheel_speed, right_wheel_speed=inner_wheel_speed
             )
         else:
+            debug_logger(
+                ("-" * 30)
+                + " turn_in_drive_direction call - REVERSE "
+                + ("-" * 30)
+                + "\n",
+                "self.cruise_speed: {}\n".format(self.cruise_speed),
+                "left_wheel_speed: {}\n".format(-outer_wheel_speed),
+                "right_wheel_speed: {}\n".format(-inner_wheel_speed),
+                "drive_direction: {}\n".format(drive_direction),
+            )
             self._base_run_direct(
-                left_wheel_speed=-left_wheel_speed, right_wheel_speed=right_wheel_speed
+                left_wheel_speed=-outer_wheel_speed,
+                right_wheel_speed=-inner_wheel_speed,
             )
 
         # if turn_direction == "straight":
@@ -266,7 +295,18 @@ class EV3TachoTank(AbstractEV3Tank):
                 else inner_wheel_speed
             )
 
-        return (left_wheel_speed, right_wheel_speed)
+        debug_logger(
+            ("-" * 30) + " _get_base_wheel_speeds_for_turn call " + ("-" * 30) + "\n",
+            "self.cruise_speed: {}\n".format(self.cruise_speed),
+            "outer_wheel_speed: {}\n".format(outer_wheel_speed),
+            "inner_wheel_speed: {}\n".format(inner_wheel_speed),
+            "left_wheel_speed: {}\n".format(left_wheel_speed),
+            "right_wheel_speed: {}\n".format(right_wheel_speed),
+            "drive_direction: {}\n".format(drive_direction),
+            "turn_direction: {}\n".format(turn_direction),
+        )
+
+        return (outer_wheel_speed, inner_wheel_speed)
 
     def stop(self):
         self.left_motor.stop()
