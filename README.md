@@ -1,8 +1,8 @@
-# ev3-basically-a-tank
+# EV3 Brick Program - Basically-A-Tank
 
 ## Overview
 
-Some kinda program for some kind of tanky creation of mine ...with the EV3Brick and LEGO 🫠
+Some kinda program for some kind of tanky creation of mine with LEGO, the EV3Brick, and Python 🫠
 
 ---
 
