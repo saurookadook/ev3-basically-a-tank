@@ -4,7 +4,6 @@ from ..utils import debug_logger
 
 
 class AbstractEV3Tank(App):
-
     __slots__ = [
         "_left_motor",
         "_right_motor",
@@ -15,6 +14,8 @@ class AbstractEV3Tank(App):
         "_turn_direction",
         "_cruise_speed",
         "_reorient_speed",
+        "_left_wheel_speed",
+        "_right_wheel_speed",
     ]
 
     def __init__(self, *args, **kwargs):
@@ -109,6 +110,22 @@ class AbstractEV3Tank(App):
     @reorient_speed.setter
     def reorient_speed(self, value):
         self._reorient_speed = value
+
+    @property
+    def left_wheel_speed(self):
+        return self._left_wheel_speed
+
+    @left_wheel_speed.setter
+    def left_wheel_speed(self, value):
+        self._left_wheel_speed = value
+
+    @property
+    def right_wheel_speed(self):
+        return self._right_wheel_speed
+
+    @right_wheel_speed.setter
+    def right_wheel_speed(self, value):
+        self._right_wheel_speed = value
 
     def _configure_ports_with_mode(self, **kwargs):
         super()._configure_ports_with_mode(self, **kwargs)

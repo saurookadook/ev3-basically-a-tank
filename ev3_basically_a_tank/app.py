@@ -4,23 +4,22 @@ from .utils import debug_logger
 
 
 class App:
-
-    __slots__ = [
-        "_name",
-        "_brick_device",
-        "_buttons",
-        "_console",
-        "_is_silenced",
-        "_input_1",
-        "_input_2",
-        "_input_3",
-        "_input_4",
-        "_port_a",
-        "_port_b",
-        "_port_c",
-        "_port_d",
-        "_sound",
-    ]
+    # __slots__ = [
+    #     "_name",
+    #     "_brick_device",
+    #     "_buttons",
+    #     "_console",
+    #     "_sound",
+    #     "_is_silenced",
+    #     "_input_1",
+    #     "_input_2",
+    #     "_input_3",
+    #     "_input_4",
+    #     "_port_a",
+    #     "_port_b",
+    #     "_port_c",
+    #     "_port_d",
+    # ]
 
     def __init__(self, name="", brick_device=None, **kwargs):
         self.name = name
@@ -111,8 +110,8 @@ class App:
     def run(self):
         """Run dha app :)"""
 
-        self._console.clear()
-        self._console.text_at(
+        self.console.clear()
+        self.console.text_at(
             "LOOK AT DHIS '{}' SHIT".format(self.name),
             alignment="C",
             reset_console=True,
@@ -120,23 +119,23 @@ class App:
 
     def boot_up_greeting(self):
         self.say("Bootin up, baby")
-        self._console.text_at("Bootin up . . .", alignment="C")
+        self.console.text_at("Bootin up . . .", alignment="C")
         sleep(1)
-        self._console.text_at("BINGO BANGO!", alignment="C", reset_console=True)
+        self.console.text_at("BINGO BANGO!", alignment="C", reset_console=True)
         self.say("BINGO BANGO!")
 
     def shut_down(self):
-        self._console.text_at("I am a pickle!", reset_console=True, alignment="C")
+        self.console.text_at("I am a pickle!", reset_console=True, alignment="C")
         self.say("I am a pickle!")
 
-        self._console.text_at("Bye forever", alignment="C")
+        self.console.text_at("Bye forever", alignment="C")
         self.say("Bye forever")
 
     def say(self, text, **kwargs):
         if self.is_silenced:
             debug_logger(text)
         else:
-            self._sound.speak(text, **kwargs)
+            self.sound.speak(text, **kwargs)
 
     @property
     def name(self):
@@ -169,6 +168,14 @@ class App:
     @console.setter
     def console(self, value):
         self._console = value
+
+    @property
+    def sound(self):
+        self._sound
+
+    @sound.setter
+    def sound(self, value):
+        self._sound = value
 
     @property
     def is_silenced(self):
@@ -241,11 +248,3 @@ class App:
     @port_d.setter
     def port_d(self, value):
         self._port_d = value
-
-    @property
-    def sound(self):
-        self._sound
-
-    @sound.setter
-    def sound(self, value):
-        self._sound = value
