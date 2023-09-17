@@ -4,7 +4,6 @@ from ..utils import debug_logger
 
 
 class AbstractEV3Tank(App):
-
     __slots__ = [
         "_left_motor",
         "_right_motor",

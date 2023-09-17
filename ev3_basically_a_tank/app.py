@@ -4,7 +4,6 @@ from .utils import debug_logger
 
 
 class App:
-
     __slots__ = [
         "_name",
         "_brick_device",
