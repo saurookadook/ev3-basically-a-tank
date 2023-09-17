@@ -10,7 +10,7 @@ def main():
         port_a=LegoPort("outA"),
         port_b=LegoPort("outB"),
         # port_d=LegoPort("outD"),
-        # disable_sound=True,
+        disable_sound=True,
     )
 
     tank_app.run()

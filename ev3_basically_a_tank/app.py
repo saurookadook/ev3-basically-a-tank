@@ -15,16 +15,12 @@ class App:
         self.name = name
         self.brick_device = brick_device
 
-        self.is_silenced = (
-            False if not hasattr(kwargs, "disable_sound") else kwargs["disable_sound"]
-        )
-
         for key_arg in kwargs:
-            if not hasattr(self, key_arg):
-                setattr(self, key_arg, kwargs[key_arg])
+            setattr(self, key_arg, kwargs[key_arg])
 
         debug_logger(
-            dir(self), ("-" * 30) + "[ end of App.__init__ ]" + ("-" * 30), end="\n\n"
+            dir(self),
+            ("-" * 30) + "[ end of App.__init__ ]" + ("-" * 30),
         )
 
     def run(self):
@@ -52,7 +48,7 @@ class App:
         self.say("Bye forever")
 
     def say(self, text, **kwargs):
-        if self.is_silenced:
+        if self.disable_sound:
             debug_logger(text)
         else:
             self.sound.speak(text, **kwargs)

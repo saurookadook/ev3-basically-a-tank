@@ -42,7 +42,6 @@ class EV3TachoTank(AbstractEV3Tank):
         debug_logger(
             dir(self),
             ("-" * 30) + "[ end of AbstractEV3Tank.__init__ ]" + ("-" * 30),
-            end="\n\n",
         )
 
     def run(
@@ -118,7 +117,7 @@ class EV3TachoTank(AbstractEV3Tank):
 
             # sleep(0.01)
 
-            if self.buttons.buttons_pressed or time() - start_time >= 300:
+            if self.buttons.buttons_pressed or time() - start_time >= 20:
                 debug_logger(int(time() - start_time))
                 self.stop()
                 break

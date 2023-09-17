@@ -26,11 +26,10 @@ class AbstractEV3Tank(App):
         debug_logger(
             dir(self),
             ("-" * 30) + "[ end of AbstractEV3Tank.__init__ ]" + ("-" * 30),
-            end="\n\n",
         )
 
     def _configure_ports_with_mode(self, **kwargs):
-        super()._configure_ports_with_mode(self, **kwargs)
+        super()._configure_ports_with_mode(**kwargs)
 
     def _configure_inputs_with_mode(self, **kwargs):
-        super()._configure_inputs_with_mode(self, **kwargs)
+        super()._configure_inputs_with_mode(**kwargs)
