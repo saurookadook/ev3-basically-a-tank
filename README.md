@@ -8,6 +8,10 @@ Some kinda program for some kind of tanky creation of mine with LEGO, the EV3Bri
 
 ## General Dev
 
+### Versions
+- Python: 3.5.3
+- Poetry: 1.1.13 (_only compatible with >=3.8.1_)
+
 To get your local environment setup, fun the following:
 
 ```shell
