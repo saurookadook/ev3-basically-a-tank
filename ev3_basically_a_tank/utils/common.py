@@ -31,15 +31,17 @@ log_file_for_run = create_log_file_for_run()
 
 
 def debug_logger(*args, **kwargs):
-    try:
-        print(*args, file=sys.stderr, **kwargs)
-    except Exception:
-        pass
-    if getattr(kwargs, "print_to_log", None):
-        with open(
-            log_file_config.log_filename, "a+", encoding=log_file_config.log_mode
-        ) as log_file:
-            log_file.write(*args, **kwargs)
+    for i, arg in enumerate(args, start=1):
+        end_spacing = "\n" if i < len(args) else "\n\n"
+        try:
+            print(arg, file=sys.stderr, end=end_spacing, **kwargs)
+        except Exception:
+            pass
+        if getattr(kwargs, "print_to_log", None):
+            with open(
+                log_file_config.log_filename, "a+", encoding=log_file_config.log_mode
+            ) as log_file:
+                log_file.write(*args, **kwargs)
 
 
 def safe_init_port(port_letter, keyword_args):
