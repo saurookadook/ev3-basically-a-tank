@@ -4,35 +4,59 @@ from .utils import debug_logger
 
 
 class App:
-
-    __slots__ = [
-        "_name",
-        "_brick_device",
-        "_buttons",
-        "_console",
-        "_is_silenced",
-        "_input_1",
-        "_input_2",
-        "_input_3",
-        "_input_4",
-        "_port_a",
-        "_port_b",
-        "_port_c",
-        "_port_d",
-        "_sound",
-    ]
-
     def __init__(self, name="", brick_device=None, **kwargs):
+        debug_logger(
+            ("-" * 30) + "[ App.__init__ ]" + ("-" * 30),
+            "---| name: {}".format(name),
+            "---| brick_device: {}".format(brick_device),
+            "---| kwargs: {}".format(kwargs),
+        )
+
         self.name = name
         self.brick_device = brick_device
 
-        # TODO: better name? also, could this be neater?
-        try:
-            self.is_silenced = kwargs["disable_sound"]
-        except KeyError:
-            self.is_silenced = False
+        self.is_silenced = (
+            False if not hasattr(kwargs, "disable_sound") else kwargs["disable_sound"]
+        )
 
-    @staticmethod
+        for key_arg in kwargs:
+            if not hasattr(self, key_arg):
+                setattr(self, key_arg, kwargs[key_arg])
+
+        debug_logger(
+            dir(self), ("-" * 30) + "[ end of App.__init__ ]" + ("-" * 30), end="\n\n"
+        )
+
+    def run(self):
+        """Run dha app :)"""
+
+        self.console.clear()
+        self.console.text_at(
+            "LOOK AT DHIS '{}' SHIT".format(self.name),
+            alignment="C",
+            reset_console=True,
+        )
+
+    def boot_up_greeting(self):
+        self.say("Bootin up, baby")
+        self.console.text_at("Bootin up . . .", alignment="C")
+        sleep(1)
+        self.console.text_at("BINGO BANGO!", alignment="C", reset_console=True)
+        self.say("BINGO BANGO!")
+
+    def shut_down(self):
+        self.console.text_at("I am a pickle!", reset_console=True, alignment="C")
+        self.say("I am a pickle!")
+
+        self.console.text_at("Bye forever", alignment="C")
+        self.say("Bye forever")
+
+    def say(self, text, **kwargs):
+        if self.is_silenced:
+            debug_logger(text)
+        else:
+            self.sound.speak(text, **kwargs)
+
     def _configure_ports_with_mode(
         self,
         port_a=None,
@@ -70,7 +94,6 @@ class App:
 
         sleep(0.5)
 
-    @staticmethod
     def _configure_inputs_with_mode(
         self,
         input_1=None,
@@ -107,145 +130,3 @@ class App:
                 self.input_4.mode = mode_for_4 or "TOUCH"
 
         sleep(0.5)
-
-    def run(self):
-        """Run dha app :)"""
-
-        self._console.clear()
-        self._console.text_at(
-            "LOOK AT DHIS '{}' SHIT".format(self.name),
-            alignment="C",
-            reset_console=True,
-        )
-
-    def boot_up_greeting(self):
-        self.say("Bootin up, baby")
-        self._console.text_at("Bootin up . . .", alignment="C")
-        sleep(1)
-        self._console.text_at("BINGO BANGO!", alignment="C", reset_console=True)
-        self.say("BINGO BANGO!")
-
-    def shut_down(self):
-        self._console.text_at("I am a pickle!", reset_console=True, alignment="C")
-        self.say("I am a pickle!")
-
-        self._console.text_at("Bye forever", alignment="C")
-        self.say("Bye forever")
-
-    def say(self, text, **kwargs):
-        if self.is_silenced:
-            debug_logger(text)
-        else:
-            self._sound.speak(text, **kwargs)
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
-
-    @property
-    def brick_device(self):
-        return self._brick_device
-
-    @brick_device.setter
-    def brick_device(self, value):
-        self._brick_device = value
-
-    @property
-    def buttons(self):
-        self._buttons
-
-    @buttons.setter
-    def buttons(self, value):
-        self._buttons = value
-
-    @property
-    def console(self):
-        self._console
-
-    @console.setter
-    def console(self, value):
-        self._console = value
-
-    @property
-    def is_silenced(self):
-        self._is_silenced
-
-    @is_silenced.setter
-    def is_silenced(self, value):
-        self._is_silenced = value
-
-    @property
-    def input_1(self):
-        return self._input_1
-
-    @input_1.setter
-    def input_1(self, value):
-        self._input_1 = value
-
-    @property
-    def input_2(self):
-        return self._input_2
-
-    @input_2.setter
-    def input_2(self, value):
-        self._input_2 = value
-
-    @property
-    def input_3(self):
-        return self._input_3
-
-    @input_3.setter
-    def input_3(self, value):
-        self._input_3 = value
-
-    @property
-    def input_4(self):
-        return self._input_4
-
-    @input_4.setter
-    def input_4(self, value):
-        self._input_4 = value
-
-    @property
-    def port_a(self):
-        return self._port_a
-
-    @port_a.setter
-    def port_a(self, value):
-        self._port_a = value
-
-    @property
-    def port_b(self):
-        return self._port_b
-
-    @port_b.setter
-    def port_b(self, value):
-        self._port_b = value
-
-    @property
-    def port_c(self):
-        return self._port_c
-
-    @port_c.setter
-    def port_c(self, value):
-        self._port_c = value
-
-    @property
-    def port_d(self):
-        return self._port_d
-
-    @port_d.setter
-    def port_d(self, value):
-        self._port_d = value
-
-    @property
-    def sound(self):
-        self._sound
-
-    @sound.setter
-    def sound(self, value):
-        self._sound = value
