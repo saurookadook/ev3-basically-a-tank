@@ -13,6 +13,7 @@ class AbstractEV3Tank(App):
 
         super().__init__(*args, **kwargs)
 
+        # TODO: is this redundant?
         self.current_drive_direction = DriveDirection.FORWARDS.value
         self.drive_direction = DriveDirection.FORWARDS.value
         self.turn_direction = TurnDirection.STRAIGHT.value
@@ -27,6 +28,27 @@ class AbstractEV3Tank(App):
             dir(self),
             ("-" * 30) + "[ end of AbstractEV3Tank.__init__ ]" + ("-" * 30),
         )
+
+    def set_current_drive_direction(self, direction):
+        try:
+            self.current_drive_direction = DriveDirection(direction).value
+        except ValueError as ve:
+            debug_logger(ve)
+            # raise ve
+
+    def set_drive_direction(self, direction):
+        try:
+            self.drive_direction = DriveDirection(direction).value
+        except ValueError as ve:
+            debug_logger(ve)
+            # raise ve
+
+    def set_turn_direction(self, direction):
+        try:
+            self.turn_direction = TurnDirection(direction).value
+        except ValueError as ve:
+            debug_logger(ve)
+            # raise ve
 
     def _configure_ports_with_mode(self, **kwargs):
         super()._configure_ports_with_mode(**kwargs)
