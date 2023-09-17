@@ -15,19 +15,16 @@ from ..utils import debug_logger, safe_init_port
 
 
 class EV3TachoTank(AbstractEV3Tank):
-    __slots__ = []
-
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        debug_logger(
+            ("-" * 30) + "[ EV3TachoTank.__init__ ]" + ("-" * 30),
+            "---| args: {}".format(args),
+            "---| kwargs: {}".format(kwargs),
+        )
 
-        try:
-            self.is_silenced = kwargs["disable_sound"]
-        except KeyError:
-            self.is_silenced = False
-
-        self.buttons = Button()
-        self.console = Console()
-        self.sound = Sound()
+        super().__init__(
+            *args, buttons=Button(), console=Console(), sound=Sound(), **kwargs
+        )
 
         super()._configure_ports_with_mode(
             port_a=safe_init_port("a", kwargs),
@@ -40,25 +37,12 @@ class EV3TachoTank(AbstractEV3Tank):
         self.left_motor = MediumMotor(self.port_b.address)
 
         self.front_touch_sensor = TouchSensor(INPUT_1)
-        self.back_touch_sensor = TouchSensor(INPUT_2)
+        self.rear_touch_sensor = TouchSensor(INPUT_2)
 
-    def boot_up_greeting(self):
-        self.say("Bootin up, baby")
-        self._console.text_at("Bootin up . . .", alignment="C")
-        sleep(1)
-        self._console.text_at("BINGO BANGO!", alignment="C", reset_console=True)
-        self.say("BINGO BANGO!")
-
-    def shut_down(self):
-        self._console.text_at("I am a pickle!", reset_console=True, alignment="C")
-        self.say("I am a pickle!")
-        sleep(1)
-        self._console.text_at("Bye forever", alignment="C")
-        self.say("Bye forever")
-
-    def say(self, text, **kwargs):
-        if not self.is_silenced:
-            self._sound.speak(text, **kwargs)
+        debug_logger(
+            dir(self),
+            ("-" * 30) + "[ end of AbstractEV3Tank.__init__ ]" + ("-" * 30),
+        )
 
     def run(
         self,
@@ -105,7 +89,7 @@ class EV3TachoTank(AbstractEV3Tank):
                 # )
                 self.say("boop bop beep")
 
-            elif self._back_touch_sensor.is_pressed:
+            elif self.rear_touch_sensor.is_pressed:
                 self.stop()
                 current_drive_direction = DriveDirection.FORWARDS.value
                 turn_direction = self._choose_turn_direction(
@@ -133,7 +117,7 @@ class EV3TachoTank(AbstractEV3Tank):
 
             # sleep(0.01)
 
-            if self._buttons.buttons_pressed or time() - start_time >= 300:
+            if self.buttons.buttons_pressed or time() - start_time >= 20:
                 debug_logger(int(time() - start_time))
                 self.stop()
                 break
