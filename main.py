@@ -10,10 +10,11 @@ def main():
         port_a=LegoPort("outA"),
         port_b=LegoPort("outB"),
         # port_d=LegoPort("outD"),
-        disable_sound=True,
+        disable_sound=False,
     )
 
     tank_app.run()
+    # tank_app._ultrasonic_sensor_test()
 
 
 if __name__ == "__main__":

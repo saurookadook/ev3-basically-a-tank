@@ -3,11 +3,11 @@ from ev3dev2.console import Console
 from ev3dev2.motor import (
     MediumMotor,
 )  # possible bug with missing setter for `duty_cycle`
-from ev3dev2.sensor import INPUT_1, INPUT_2
-from ev3dev2.sensor.lego import TouchSensor
+from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3
+from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor
 from ev3dev2.sound import Sound
 from inspect import getmembers
-from time import sleep, time
+from time import perf_counter, sleep, time
 
 from .abstract_tank import AbstractEV3Tank
 from ..constants import DriveDirection, TurnDirection
@@ -40,6 +40,12 @@ class EV3TachoTank(AbstractEV3Tank):
 
         self.front_touch_sensor = TouchSensor(INPUT_1)
         self.rear_touch_sensor = TouchSensor(INPUT_2)
+        self.ultrasonic_sensor = UltrasonicSensor(INPUT_3)
+
+        self.run_timeout_in_seconds = 20
+
+        self.start_time = None
+        self.loop_timer = None
 
         debug_logger(
             dir(self),
@@ -52,9 +58,12 @@ class EV3TachoTank(AbstractEV3Tank):
         self.boot_up_greeting()
 
         current_drive_direction = DriveDirection.FORWARDS.value
-        start_time = int(time())
+        self.start_time = time()
+        self.loop_timer = perf_counter()
 
         while True:
+            self.ping_ultrasonic_sensor()
+
             if self.turn_direction != TurnDirection.STRAIGHT.value:
                 self.turn_in_drive_direction(
                     turn_direction=TurnDirection.STRAIGHT.value
@@ -120,12 +129,27 @@ class EV3TachoTank(AbstractEV3Tank):
 
             # sleep(0.01)
 
-            if self.buttons.buttons_pressed or time() - start_time >= 300:
-                debug_logger(int(time() - start_time))
+            if (
+                self.buttons.buttons_pressed
+                or time() - self.start_time >= self.run_timeout_in_seconds
+            ):
+                debug_logger(time() - self.start_time)
                 self.stop()
                 break
 
         self.shut_down()
+
+    def ping_ultrasonic_sensor(self):
+        if perf_counter() - self.loop_timer < 0.25:
+            return False
+        else:
+            self.loop_timer = perf_counter()
+
+        if self.ultrasonic_sensor.distance_centimeters <= 15:
+            self.say("Uh oh, i am gonna crash!")
+            self.loop_timer = perf_counter()
+            return True
+        return False
 
     def drive(
         self,
@@ -146,11 +170,11 @@ class EV3TachoTank(AbstractEV3Tank):
             - `right_wheel_speed` positive
 
         Args:
-            speed (_type_, optional): _description_. Defaults to None.
-            left_wheel_speed (_type_, optional): _description_. Defaults to None.
-            right_wheel_speed (_type_, optional): _description_. Defaults to None.
-            drive_direction (str, optional): _description_. Defaults to "forwards".
-            duration (int, optional): _description_. Defaults to -1.
+            `speed`: _description_. Defaults to None.
+            `left_wheel_speed`: _description_. Defaults to None.
+            `right_wheel_speed`: _description_. Defaults to None.
+            `drive_direction`: _description_. Defaults to "forwards".
+            `duration`: _description_. Defaults to -1.
         """
         if drive_direction != self.current_drive_direction:
             self.set_current_drive_direction(drive_direction)
@@ -303,3 +327,23 @@ class EV3TachoTank(AbstractEV3Tank):
     def stop(self):
         self.left_motor.stop()
         self.right_motor.stop()
+
+    def _run_test(self):
+        self.boot_up_greeting()
+
+        current_drive_direction = DriveDirection.FORWARDS.value
+        self.start_time = time()
+        self.loop_timer = perf_counter()
+
+        while True:
+            # Do the test thing
+
+            if (
+                self.buttons.buttons_pressed
+                or time() - self.start_time >= self.run_timeout_in_seconds
+            ):
+                debug_logger(time() - self.start_time)
+                self.stop()
+                break
+
+        self.shut_down()
