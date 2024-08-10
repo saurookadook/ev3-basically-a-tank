@@ -5,7 +5,7 @@ description = ""
 authors = ["Andy Maskiell <maskiella@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.5.3"
+python = ">=3.5.3,>=3.8.1,<4.0"
 pybricks = "^3.1.0"
 python-ev3dev = "^1.2.0"
 python-ev3dev2 = "^2.1.0"
