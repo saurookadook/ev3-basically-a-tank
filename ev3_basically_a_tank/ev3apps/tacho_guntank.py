@@ -43,6 +43,7 @@ class EV3TachoTank(AbstractEV3Tank):
         self.ultrasonic_sensor = UltrasonicSensor(INPUT_3)
 
         self.run_timeout_in_seconds = 20
+        self.POTENTIAL_CRASH_DIST_IN_CM = 45
 
         self.start_time = None
         self.loop_timer = None
@@ -62,8 +63,6 @@ class EV3TachoTank(AbstractEV3Tank):
         self.loop_timer = perf_counter()
 
         while True:
-            self.ping_ultrasonic_sensor()
-
             if self.turn_direction != TurnDirection.STRAIGHT.value:
                 self.turn_in_drive_direction(
                     turn_direction=TurnDirection.STRAIGHT.value
@@ -74,7 +73,8 @@ class EV3TachoTank(AbstractEV3Tank):
                 duration=-1,
             )
 
-            if self.front_touch_sensor.is_pressed:
+            # TODO: some of this feels like it could benefit from a refactor?
+            if self.front_touch_sensor.is_pressed or self.is_within_potential_crash_distance():
                 self.stop()
                 current_drive_direction = DriveDirection.REVERSE.value
                 # TODO: make use of self.set_turn_direction
@@ -88,7 +88,10 @@ class EV3TachoTank(AbstractEV3Tank):
                     "drive_direction: {}".format(self.drive_direction),
                     "current_drive_direction: {}".format(current_drive_direction),
                 )
-                self.say("Ouch, my face!")
+                if self.front_touch_sensor.is_pressed:
+                    self.say("Ouch, my face!")
+                else:
+                    self.say("Uh oh, i am gonna crash!")
                 self.drive(
                     speed=self.reorient_speed,
                     drive_direction=current_drive_direction,
@@ -139,14 +142,21 @@ class EV3TachoTank(AbstractEV3Tank):
 
         self.shut_down()
 
-    def ping_ultrasonic_sensor(self):
-        if perf_counter() - self.loop_timer < 0.25:
-            return False
-        else:
-            self.loop_timer = perf_counter()
+    def is_within_potential_crash_distance(self):
+        debug_logger(
+            ("-" * 30) + "[ EV3TachoTank.ping_ultrasonic_sensor ]" + ("-" * 30),
+            "self.ultrasonic_sensor.distance_centimeters: {}".format(
+                self.ultrasonic_sensor.distance_centimeters
+            ),
+            "self.loop_timer: {}".format(self.loop_timer),
+            "perf_counter(): {}".format(perf_counter()),
+        )
 
-        if self.ultrasonic_sensor.distance_centimeters <= 15:
-            self.say("Uh oh, i am gonna crash!")
+        if (
+            perf_counter() - self.loop_timer >= 0.25
+            and self.ultrasonic_sensor.distance_centimeters
+            <= self.POTENTIAL_CRASH_DIST_IN_CM
+        ):
             self.loop_timer = perf_counter()
             return True
         return False
